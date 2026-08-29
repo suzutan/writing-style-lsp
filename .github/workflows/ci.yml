@@ -1,0 +1,27 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run build
+      - run: npm test
+      - name: dogfood (lint own docs)
+        run: node dist/cli.js lint README.md SKILL.md --fail-on warning
+      - name: dist freshness (committed bundle matches src)
+        run: |
+          git diff --exit-code dist
+          test -z "$(git status --porcelain dist)"

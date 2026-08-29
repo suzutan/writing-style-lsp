@@ -1,0 +1,59 @@
+version: '3'
+
+tasks:
+  default:
+    desc: List available tasks
+    cmds:
+      - task --list
+    silent: true
+
+  install:
+    desc: Install dependencies (npm ci)
+    cmds:
+      - npm ci
+
+  build:
+    desc: Bundle CLI and LSP server into dist/
+    cmds:
+      - node scripts/build.mjs
+
+  lint:
+    desc: Biome check (lint + format)
+    cmds:
+      - npx --no-install biome check .
+
+  lint:fix:
+    desc: Biome check --write
+    cmds:
+      - npx --no-install biome check --write .
+
+  typecheck:
+    desc: tsc --noEmit
+    cmds:
+      - npx --no-install tsc --noEmit
+
+  test:
+    desc: vitest run (requires build for LSP smoke test)
+    cmds:
+      - npx --no-install vitest run
+
+  dogfood:
+    desc: Lint own docs with the built CLI
+    cmds:
+      - node dist/cli.js lint README.md SKILL.md --fail-on warning
+
+  dist-check:
+    desc: Ensure committed dist/ matches src/ (guardrail)
+    cmds:
+      - git diff --exit-code dist
+      - test -z "$(git status --porcelain dist)"
+
+  ci:
+    desc: Run all checks (lint, typecheck, build, test, dogfood, dist freshness)
+    cmds:
+      - task: lint
+      - task: typecheck
+      - task: build
+      - task: test
+      - task: dogfood
+      - task: dist-check

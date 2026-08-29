@@ -1,0 +1,23 @@
+# Install: lefthook install（task init 相当）
+pre-commit:
+  parallel: true
+  jobs:
+    - name: biome
+      glob:
+        - "src/**"
+        - "tests/**"
+        - "scripts/**"
+        - "*.json"
+        - "rules/**"
+      run: npx --no-install biome check {staged_files}
+    - name: typecheck
+      glob:
+        - "src/**"
+        - "tests/**"
+        - "tsconfig.json"
+      run: npx --no-install tsc --noEmit
+
+pre-push:
+  jobs:
+    - name: ci
+      run: task ci

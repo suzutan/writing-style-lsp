@@ -1,7 +1,7 @@
 {
   "markdown": {
-    "command": "python3",
-    "args": ["${CLAUDE_PLUGIN_ROOT}/bin/wslsp-serve"],
+    "command": "node",
+    "args": ["${CLAUDE_PLUGIN_ROOT}/dist/server.js"],
     "extensionToLanguage": {
       ".md": "markdown",
       ".markdown": "markdown"

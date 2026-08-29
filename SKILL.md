@@ -5,7 +5,7 @@ description: |
   「文章 lint して」「writing style チェック」「文書の規律検査」「リンク切れ検査」などでトリガー。
   LSP サーバーとしても動作し、.md の編集時 diagnostics を提供する。
 license: MIT
-compatibility: Requires Python 3.9+ (stdlib only)
+compatibility: Requires Node.js 20+
 user-invocable: true
 ---
 
@@ -15,20 +15,20 @@ user-invocable: true
 
 ## CLI
 
-このディレクトリをカレントにして実行する。
+このディレクトリをカレントにして実行する（バンドル済みのため `npm install` は不要）。
 
 ```bash
 # lint（ファイル・ディレクトリ混在可）
-python3 -m wslsp lint <file-or-dir> --stat
+node dist/cli.js lint <file-or-dir> --stat
 
 # severity で絞る / JSON 出力 / CI 用 exit code
-python3 -m wslsp lint docs/ --min-severity warning --format json --fail-on warning
+node dist/cli.js lint docs/ --min-severity warning --format json --fail-on warning
 
 # 既定 off のカテゴリ（obsidian = 素の URL 推奨）を有効化
-python3 -m wslsp lint draft.md --enable-category obsidian
+node dist/cli.js lint draft.md --enable-category obsidian
 
 # fix.replace を持つルールの機械的修正
-python3 -m wslsp lint docs/ --fix
+node dist/cli.js lint docs/ --fix
 ```
 
 ## workspace 単位の除外

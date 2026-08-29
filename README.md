@@ -2,7 +2,7 @@
 
 日本語 Markdown の文章規律を決定論的に検査する linter と LSP サーバー。AI 生成文書に混入しやすいパターン（記号の残骸、保険表現、テンプレ比喩、語尾の単調さ）、表記規則違反（URL への全角文字密着、省略形の issue 番号）、参照切れ（wikilink、相対リンク、アンカー）を編集時に指摘する。
 
-ルールは JSON で宣言し、エンジン本体を変更せずに追加・調整できる。依存は Python 3.9+ の標準ライブラリのみ。
+ルールは JSON で宣言し、エンジン本体を変更せずに追加・調整できる。TypeScript 実装で、バンドル済みの `dist/` を同梱しているため、実行時依存は Node.js 20+ のみ（`npm install` 不要で動く）。
 
 ## Claude Code への導入（plugin marketplace）
 
@@ -19,22 +19,22 @@ claude plugin install writing-style-lsp@suzutan
 
 ```bash
 # lint（ファイル・ディレクトリ混在可）
-python3 -m wslsp lint path/to/doc.md docs/ --stat
+node dist/cli.js lint path/to/doc.md docs/ --stat
 
 # severity で絞る / JSON 出力 / CI 用 exit code
-python3 -m wslsp lint docs/ --min-severity warning --format json --fail-on warning
+node dist/cli.js lint docs/ --min-severity warning --format json --fail-on warning
 
 # 既定 off のカテゴリを有効化
-python3 -m wslsp lint draft.md --enable-category obsidian
+node dist/cli.js lint draft.md --enable-category obsidian
 
 # fix.replace を持つルールの機械的修正を適用
-python3 -m wslsp lint docs/ --fix
+node dist/cli.js lint docs/ --fix
 ```
 
 LSP サーバー（stdio）:
 
 ```bash
-python3 -m wslsp serve
+node dist/server.js
 ```
 
 環境変数で設定する。
@@ -85,7 +85,7 @@ python3 -m wslsp serve
 ```
 
 ```bash
-python3 -m wslsp lint docs/ --rules rules/core.json --rules org.json
+node dist/cli.js lint docs/ --rules rules/core.json --rules org.json
 ```
 
 ## workspace 単位の除外（.wslsp.json）
@@ -96,17 +96,30 @@ python3 -m wslsp lint docs/ --rules rules/core.json --rules org.json
 {"overrides": [{"paths": "^journal/", "disable": ["ref.wikilink-missing"]}]}
 ```
 
-## テスト
+## 開発
+
+TypeScript + [vscode-languageserver](https://www.npmjs.com/package/vscode-languageserver)。esbuild で `dist/cli.js` と `dist/server.js` へ単一ファイルにバンドルし、成果物をコミットする（利用側の `npm install` を不要にするため）。lint と format は Biome、テストは vitest、タスクランナーは go-task、git hook は lefthook。
 
 ```bash
-python3 tests/test_rules.py      # 既知入力: bad.md で全ルール発火、clean.md で誤検知ゼロ
-python3 tests/test_overrides.py  # .wslsp.json によるパス単位の除外
-python3 tests/lsp_smoke.py       # LSP プロトコル: initialize / didOpen / didChange / shutdown
+task install     # npm ci
+task ci          # lint + typecheck + build + test + dogfood + dist 鮮度検査
+task lint:fix    # Biome 自動修正
+```
+
+ガードレール:
+
+- lefthook: pre-commit で Biome と型検査、pre-push で `task ci`
+- Claude Code hook（`.claude/settings.json`）: Edit / Write のたびに、`.ts` / `.json` は Biome、`.md` は自身の linter で即時検査
+- CI（GitHub Actions）と `task dist-check`: コミット済み `dist/` が `src/` と一致しないと fail（バンドルの更新漏れを防ぐ）
+- dogfood: README と SKILL.md を自身の linter で検査する
+
+```bash
+npx vitest run   # 既知入力（全ルール発火 / 誤検知ゼロ）、.wslsp.json override、LSP プロトコル一巡
 ```
 
 ## 設計メモ
 
-- 位置情報は内部で codepoint 単位、LSP 応答では UTF-16 code unit へ変換する（LSP 既定のエンコーディングに一致させるため）
+- 位置情報は UTF-16 code unit 単位で扱う（LSP 既定のエンコーディングと一致。範囲変換は `vscode-languageserver-textdocument` の `positionAt`）
 - wikilink の解決は `.obsidian` を持つ最近傍の祖先ディレクトリを vault root とし、basename とパス末尾一致で判定する
 - severity は error / warning / info の3段で、error は参照切れのみ。文体系は warning 以下に留め、文脈次第で正当な表現を error にしない
 
