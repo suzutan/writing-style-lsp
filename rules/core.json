@@ -1,0 +1,253 @@
+{
+  "version": 1,
+  "name": "writing-style-core",
+  "description": "日本語 Markdown の文章規律ルールセット（AI 生成文書に混入しやすいパターン・文体規律・表記規則・参照検査）",
+  "default_disabled_categories": ["obsidian"],
+  "rules": [
+    {
+      "id": "ai-slop.p1.em-dash",
+      "category": "ai-slop",
+      "severity": "warning",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "──|—",
+      "message": "em ダッシュ（──）を使わない。読点・句点で文を区切る",
+      "source": "P1 記号の残骸"
+    },
+    {
+      "id": "ai-slop.p1.fullwidth-slash",
+      "category": "ai-slop",
+      "severity": "warning",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "／",
+      "message": "全角スラッシュ（／）による並列を使わない。「と」「や」または半角 / で書く",
+      "source": "P1 記号の残骸"
+    },
+    {
+      "id": "ai-slop.p1.arrow-causal",
+      "category": "ai-slop",
+      "severity": "info",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "→",
+      "skip_tables": true,
+      "message": "散文中の矢印（→）による因果・展開表現を避ける。接続は文で書く",
+      "source": "P1 記号の残骸"
+    },
+    {
+      "id": "ai-slop.p1.kagikakko-overuse",
+      "category": "ai-slop",
+      "severity": "info",
+      "type": "density",
+      "pattern": "「",
+      "max_per_paragraph": 3,
+      "message": "同一段落内の「」が多い（{count} 回）。過剰なカギ括弧を避ける",
+      "source": "P1 記号の残骸"
+    },
+    {
+      "id": "ai-slop.p1.bold-keyword",
+      "category": "ai-slop",
+      "severity": "warning",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "\\*\\*(重要|注意|必須|ポイント|注目)[^*\\n]*\\*\\*",
+      "message": "**重要** 等の強調語装飾を使わない。事実のみで書く",
+      "source": "P1 記号の残骸 / 装飾最小化"
+    },
+    {
+      "id": "ai-slop.p1.bold-generic",
+      "category": "ai-slop",
+      "severity": "info",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "\\*\\*[^*\\n]+\\*\\*",
+      "message": "太字強調。本当に必要か確認する（装飾は最小化）",
+      "source": "装飾最小化"
+    },
+    {
+      "id": "ai-slop.p2.ending-repetition",
+      "category": "ai-slop",
+      "severity": "warning",
+      "type": "ending_repetition",
+      "min_run": 3,
+      "message": "同一語尾「{ending}」が {count} 文連続。語尾を散らす",
+      "source": "P2 リズムの単調さ"
+    },
+    {
+      "id": "ai-slop.p2.connective-run",
+      "category": "ai-slop",
+      "severity": "info",
+      "type": "connective_run",
+      "connectives": ["しかし", "また", "さらに", "そして", "一方で", "加えて"],
+      "min_run": 3,
+      "message": "文頭接続詞の羅列（{count} 文連続）。接続詞に頼らず文の順序で示す",
+      "source": "P2 リズムの単調さ"
+    },
+    {
+      "id": "ai-slop.p2.not-a-but-b",
+      "category": "ai-slop",
+      "severity": "info",
+      "type": "density",
+      "pattern": "ではなく",
+      "max_per_paragraph": 1,
+      "message": "not A but B 構文（ではなく）が同一段落に {count} 回。連打を避ける",
+      "source": "P2 リズムの単調さ"
+    },
+    {
+      "id": "ai-slop.p3.meta-structure",
+      "category": "ai-slop",
+      "severity": "warning",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "本記事では|この記事では|本稿では|以下の[0-9０-９]+つの(観点|ポイント|軸|視点)|について(解説|説明|紹介)(します|していき)|見ていきましょう|まとめていきます",
+      "message": "構造・メタ宣言（説明書感）を書かない。情報を直接書く",
+      "source": "P3 説明書感"
+    },
+    {
+      "id": "ai-slop.p4.hedging",
+      "category": "ai-slop",
+      "severity": "warning",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "一概には言えません|状況によって(は)?異なります|ケースバイケース|注意が必要です|と言えるでしょう|ではないでしょうか|かもしれませんが",
+      "message": "保険表現（事なかれ主義）を書かない。判断を明示する",
+      "source": "P4 事なかれ主義"
+    },
+    {
+      "id": "ai-slop.p5.abstract-word",
+      "category": "ai-slop",
+      "severity": "info",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "本質的に|本質を|変革(を|し)|価値を(提供|創出)|最適化を実現|活用することで|推進していき",
+      "message": "抽象語・万能語の名詞偏重。動詞中心の具体表現に置き換える",
+      "source": "P5 抽象語・万能語"
+    },
+    {
+      "id": "ai-slop.p6.template-metaphor",
+      "category": "ai-slop",
+      "severity": "warning",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "羅針盤|架け橋|種を蒔|土台を(築|固め)|礎(を|と)",
+      "message": "テンプレ比喩（羅針盤・架け橋・土台等）は使用禁止",
+      "source": "P6 テンプレ比喩"
+    },
+    {
+      "id": "ai-slop.p6.metaphor-engine-dna",
+      "category": "ai-slop",
+      "severity": "info",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "エンジン|DNA",
+      "exceptions": ["検索エンジン", "レンダリングエンジン", "推論エンジン", "ゲームエンジン", "ルールエンジン", "エンジン本体", "JavaScript ?エンジン", "V8 ?エンジン", "エンジニア", "DNA鑑定", "エンジンオイル"],
+      "message": "比喩としての「エンジン」「DNA」は使用禁止（技術用語としての使用は除外）",
+      "source": "P6 テンプレ比喩"
+    },
+    {
+      "id": "ai-slop.p7.migration-history",
+      "category": "ai-slop",
+      "severity": "info",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "旧[^\\s。、]{1,20}(は|を)廃止|以前は|廃止しました|移行済み",
+      "message": "移行履歴の経過説明はドキュメントに書かない（commit message / ADR / PR 説明へ）。ADR の Context 節は対象外",
+      "source": "P7 移行履歴の経過説明"
+    },
+    {
+      "id": "style.filler-connective",
+      "category": "style",
+      "severity": "warning",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "(?:(?<=。)|(?<=\\n)|^)(実際には|つまり|結果として|ということで|事実として|具体的には|要するに|なお)、",
+      "message": "冗長な接続詞・前置きを排除する。情報を直接書く",
+      "source": "文体規律"
+    },
+    {
+      "id": "style.slang",
+      "category": "style",
+      "severity": "warning",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "流儀|お作法|やり方",
+      "message": "俗語を避ける（流儀・お作法 → 構成・方式・手順、やり方 → 実装・手順）",
+      "source": "文体規律"
+    },
+    {
+      "id": "style.decoration-adverb",
+      "category": "style",
+      "severity": "info",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "とても|非常に|しっかり",
+      "message": "強調副詞は本当に必要なときだけ。事実のみで十分なら削る",
+      "source": "装飾最小化"
+    },
+    {
+      "id": "style.emoji",
+      "category": "style",
+      "severity": "warning",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "[\\U0001F300-\\U0001FAFF\\u2600-\\u27BF\\u2B50\\u2757\\u2764]",
+      "message": "絵文字を使わない（装飾最小化）",
+      "source": "装飾最小化"
+    },
+    {
+      "id": "format.bare-pr-number",
+      "category": "format",
+      "severity": "info",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "(?<![\\w/#&])#[0-9]+(?![0-9])",
+      "message": "PR / issue 番号は省略形（#25）ではなく完全 URL で書く",
+      "source": "表記規則"
+    },
+    {
+      "id": "format.url-adjacency",
+      "category": "format",
+      "severity": "warning",
+      "type": "url_adjacency",
+      "message": "URL の前後に半角スペースを置く。全角文字が密着するとリンクが壊れる",
+      "source": "表記規則"
+    },
+    {
+      "id": "obsidian.prefer-bare-url",
+      "category": "obsidian",
+      "severity": "info",
+      "type": "regex",
+      "target": "linkable",
+      "pattern": "\\[[^\\]\\n]+\\]\\(https?://[^)\\s]+\\)",
+      "message": "Markdown リンクではなく素の URL で書く（Obsidian は URL を自動でリンク化する）",
+      "source": "Obsidian 運用"
+    },
+    {
+      "id": "ref.wikilink-missing",
+      "category": "ref",
+      "severity": "error",
+      "type": "wikilink",
+      "message": "wikilink の解決先「{target}」が vault 内に存在しない",
+      "source": "参照検査"
+    },
+    {
+      "id": "ref.md-link-missing",
+      "category": "ref",
+      "severity": "error",
+      "type": "md_link",
+      "message": "リンク先「{target}」が存在しない",
+      "source": "参照検査"
+    },
+    {
+      "id": "ref.absolute-path-link",
+      "category": "ref",
+      "severity": "warning",
+      "type": "regex",
+      "target": "linkable",
+      "pattern": "\\]\\((?:file://|/Users/|/home/|/tmp/|/private/)[^)]*\\)",
+      "message": "絶対 path のリンクは環境依存で壊れる。相対 path にする",
+      "source": "参照検査"
+    }
+  ]
+}

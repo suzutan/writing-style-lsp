@@ -1,0 +1,13 @@
+{
+  "name": "suzutan",
+  "owner": {
+    "name": "suzutan"
+  },
+  "plugins": [
+    {
+      "name": "writing-style-lsp",
+      "source": "./",
+      "description": "日本語 Markdown の文章規律（AI slop パターン・表記規則・参照切れ）を決定論的に検査する linter + LSP"
+    }
+  ]
+}
