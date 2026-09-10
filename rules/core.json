@@ -105,6 +105,16 @@
       "source": "P3 説明書感"
     },
     {
+      "id": "ai-slop.p3.important-preview",
+      "category": "ai-slop",
+      "severity": "warning",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "重要なのは",
+      "message": "「重要なのは」と主張を予告しない。主張をそのまま書く",
+      "source": "日本語技術文書の文章規範"
+    },
+    {
       "id": "ai-slop.p4.hedging",
       "category": "ai-slop",
       "severity": "warning",
@@ -123,6 +133,26 @@
       "pattern": "本質的に|本質を|変革(を|し)|価値を(提供|創出)|最適化を実現|活用することで|推進していき",
       "message": "抽象語・万能語の名詞偏重。動詞中心の具体表現に置き換える",
       "source": "P5 抽象語・万能語"
+    },
+    {
+      "id": "ai-slop.p5.empty-adjective",
+      "category": "ai-slop",
+      "severity": "info",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "不可欠|核心的|多角的",
+      "message": "空虚な形容を避ける。必要な理由や評価軸を具体的に書く",
+      "source": "日本語技術文書の文章規範"
+    },
+    {
+      "id": "ai-slop.p5.empty-verb",
+      "category": "ai-slop",
+      "severity": "info",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "掘り下げ(?:る|ます|た)|言及(?:する|します|した)",
+      "message": "空虚な動詞を避ける。何をどう述べるか具体的に書く",
+      "source": "日本語技術文書の文章規範"
     },
     {
       "id": "ai-slop.p6.template-metaphor",
@@ -166,6 +196,37 @@
       "pattern": "旧[^\\s。、]{1,20}(は|を)廃止|以前は|廃止しました|移行済み",
       "message": "移行履歴の経過説明はドキュメントに書かない（commit message / ADR / PR 説明へ）。ADR の Context 節は対象外",
       "source": "P7 移行履歴の経過説明"
+    },
+    {
+      "id": "style.colloquial-technical",
+      "category": "style",
+      "severity": "info",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "(?:規範|ルール|設定|仕組み|手法|方式|機能|施策|対策|プロンプト|キャッシュ|インデックス|アルゴリズム|モデル)(?:が|は)[^。\\n]{0,20}効く|筋が(?:いい|良い)",
+      "message": "口語的な技術表現を避ける。効果や見込みを具体的に書く",
+      "source": "日本語技術文書の文章規範"
+    },
+    {
+      "id": "style.translation-anthropomorphism",
+      "category": "style",
+      "severity": "info",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "(?:データ|数値|ログ|結果)(?:が|は)[^。\\n]{0,20}語(?:る|った|って)|(?:モデル|AI)(?:が|は)[^。\\n]{0,20}知っている|(?:この)?問い(?:が|は)開かれている|(?:情報|データ)(?:が|は)[^。\\n]{0,20}に住んでいる|(?:ベクトル|表現)(?:が|は)[^。\\n]{0,20}を運ぶ|(?:軸|特徴)(?:が|は)[^。\\n]{0,20}露出する",
+      "message": "無生物を擬人化した翻訳調を避ける。人か処理を主語に戻す",
+      "source": "日本語技術文書の文章規範"
+    },
+    {
+      "id": "style.parallel-long-sentence",
+      "category": "style",
+      "severity": "info",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "(?=[^。\\n]*(?:、[^。\\n]*){3,}。)(?:[^。\\n]*?し、){2,}[^。\\n]*。|(?:[^。、\\n]+、){3,}[^。\\n]*?の[0-9０-９]+件",
+      "skip_tables": true,
+      "message": "一文に並列の事実が連続している。箇条書きへの分割を検討する",
+      "source": "日本語技術文書の文章規範"
     },
     {
       "id": "style.filler-connective",
