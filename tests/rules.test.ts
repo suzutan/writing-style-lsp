@@ -26,6 +26,19 @@ const EXPECTED_BAD = new Set([
   "ai-slop.p6.template-metaphor",
   "ai-slop.p6.metaphor-engine-dna",
   "ai-slop.p7.migration-history",
+  "ai-slop.nj.blog-outro",
+  "ai-slop.nj.review-request",
+  "ai-slop.nj.conclusion-tone",
+  "ai-slop.nj.overemphasis",
+  "ai-slop.nj.formulaic-intro",
+  "ai-slop.nj.weak-signal",
+  "ai-slop.nj.stance-declaration",
+  "ai-slop.nj.hollow-adjective",
+  "ai-slop.nj.hollow-verb",
+  "ai-slop.nj.translationese-can",
+  "ai-slop.nj.translationese-viewpoint",
+  "ai-slop.nj.translationese-misc",
+  "ai-slop.nj.inanimate-subject",
   "style.colloquial-technical",
   "style.translation-anthropomorphism",
   "style.parallel-long-sentence",
@@ -33,6 +46,7 @@ const EXPECTED_BAD = new Set([
   "style.slang",
   "style.decoration-adverb",
   "style.emoji",
+  "vocab.version-suffix",
   "format.bare-pr-number",
   "format.url-adjacency",
   "obsidian.prefer-bare-url",
@@ -53,4 +67,13 @@ it("bad.md で全ルールが発火する", () => {
 it("clean.md で誤検知が出ない", () => {
   const diags = engine.lintFile(path.join(FIXTURES, "clean.md"));
   expect(diags.map((d) => `${d.line}:${d.col} ${d.ruleId} ${d.snippet}`)).toEqual([]);
+});
+
+it("再較正したルールの severity を維持する", () => {
+  const diags = engine.lintFile(path.join(FIXTURES, "bad.md"));
+  const severities = new Map(diags.map((d) => [d.ruleId, d.severity]));
+
+  expect(severities.get("ai-slop.nj.blog-outro")).toBe("warning");
+  expect(severities.get("ai-slop.nj.review-request")).toBe("info");
+  expect(severities.get("ai-slop.p3.important-preview")).toBe("info");
 });

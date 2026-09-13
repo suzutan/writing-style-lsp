@@ -47,12 +47,13 @@ node dist/server.js
 
 ## ルールセット
 
-`rules/core.json` に 31 ルールを宣言する。このうち6ルールは「日本語技術文書の文章規範」 https://gist.github.com/k16shikano/fd287c3133457c4fd8f5601d34aa817d を機械検出できる条件へ限定して取り込んでいる。
+`rules/core.json` に 45 ルールを宣言する。このうち6ルールは「日本語技術文書の文章規範」 https://gist.github.com/k16shikano/fd287c3133457c4fd8f5601d34aa817d を機械検出できる条件へ限定して取り込んでいる。
 
 | カテゴリ | 内容 | 例 |
 | --- | --- | --- |
 | `ai-slop` | AI 生成文書に混入しやすいパターン（P1 記号の残骸〜P7 移行履歴） | em ダッシュ、同一語尾3連、保険表現、空虚な表現、テンプレ比喩 |
 | `style` | 文体規律 | 冗長接続詞、俗語、翻訳調、並列長文、装飾副詞、絵文字 |
+| `vocab` | 語彙規律 | バージョンや派生を指す「版」接尾辞 |
 | `format` | 表記規則 | 省略形 issue 番号、URL 前後の密着 |
 | `obsidian` | Obsidian 運用向け（既定 off） | Markdown リンクではなく素の URL を推奨 |
 | `ref` | 参照検査 | wikilink 切れ、相対リンク切れ、アンカー不一致、絶対 path |
@@ -124,5 +125,7 @@ npx vitest run   # 既知入力（全ルール発火 / 誤検知ゼロ）、.wsl
 - severity は error / warning / info の3段で、error は参照切れのみ。文体系は warning 以下に留め、文脈次第で正当な表現を error にしない
 
 ## License
+
+本リポジトリの一部のルール（`source` が `natural-japanese (coji, MIT)` のもの）は https://github.com/coji/natural-japanese （MIT License, Copyright (c) coji）の語句カタログに由来する。
 
 MIT
