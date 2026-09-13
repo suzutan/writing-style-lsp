@@ -107,7 +107,7 @@
     {
       "id": "ai-slop.p3.important-preview",
       "category": "ai-slop",
-      "severity": "warning",
+      "severity": "info",
       "type": "regex",
       "target": "prose",
       "pattern": "重要なのは",
@@ -198,6 +198,136 @@
       "source": "P7 移行履歴の経過説明"
     },
     {
+      "id": "ai-slop.nj.blog-outro",
+      "category": "ai-slop",
+      "severity": "warning",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "いかがでしたか|紹介していきます|解説していきます|深掘りしていきます",
+      "message": "ブログ調の導入・締めを避ける。伝える内容を直接書く",
+      "source": "natural-japanese (coji, MIT)"
+    },
+    {
+      "id": "ai-slop.nj.review-request",
+      "category": "ai-slop",
+      "severity": "info",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "いかがでしょうか",
+      "message": "定型的な問いかけを避ける。求める判断や確認事項を具体的に書く",
+      "source": "natural-japanese (coji, MIT)"
+    },
+    {
+      "id": "ai-slop.nj.conclusion-tone",
+      "category": "ai-slop",
+      "severity": "info",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "と言えるだろう|と言えます|ということになるでしょう|結論から言うと|結論として|まとめると|総じて",
+      "message": "定型的な結論表現を避ける。根拠と判断を直接書く",
+      "source": "natural-japanese (coji, MIT)"
+    },
+    {
+      "id": "ai-slop.nj.overemphasis",
+      "category": "ai-slop",
+      "severity": "info",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "極めて重要|言うまでもなく|言うまでもありません|まさしく",
+      "message": "根拠のない強調を避ける。重要な理由を具体的に書く",
+      "source": "natural-japanese (coji, MIT)"
+    },
+    {
+      "id": "ai-slop.nj.formulaic-intro",
+      "category": "ai-slop",
+      "severity": "info",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "さて、|それでは、|このような中|ここで注目したいのは",
+      "message": "定型的な導入を避ける。情報を直接書く",
+      "source": "natural-japanese (coji, MIT)"
+    },
+    {
+      "id": "ai-slop.nj.weak-signal",
+      "category": "ai-slop",
+      "severity": "info",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "このように|ポイントは",
+      "message": "弱いメタ表現を避ける。要点を具体的に書く",
+      "source": "natural-japanese (coji, MIT)"
+    },
+    {
+      "id": "ai-slop.nj.stance-declaration",
+      "category": "ai-slop",
+      "severity": "info",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "正面から(扱う|見る|書く|立てる|回収する)",
+      "message": "姿勢の宣言で済ませず、扱う内容を具体的に書く",
+      "source": "natural-japanese (coji, MIT)"
+    },
+    {
+      "id": "ai-slop.nj.hollow-adjective",
+      "category": "ai-slop",
+      "severity": "info",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "鍵となる|包括的|総合的",
+      "message": "空虚な形容を避ける。必要な理由や評価軸を具体的に書く",
+      "source": "natural-japanese (coji, MIT)"
+    },
+    {
+      "id": "ai-slop.nj.hollow-verb",
+      "category": "ai-slop",
+      "severity": "info",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "深掘りする|言語化する|について見ていく|を探求する",
+      "message": "空虚な動詞を避ける。何をどう述べるか具体的に書く",
+      "source": "natural-japanese (coji, MIT)"
+    },
+    {
+      "id": "ai-slop.nj.translationese-can",
+      "category": "ai-slop",
+      "severity": "info",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "することができ(る|ます|た)|することが可能(です|だ|になる)",
+      "message": "「することができる」等の翻訳調を避ける。可能形か簡潔な動詞に書き換える",
+      "source": "natural-japanese (coji, MIT)"
+    },
+    {
+      "id": "ai-slop.nj.translationese-viewpoint",
+      "category": "ai-slop",
+      "severity": "info",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "という点で|という観点(から|で)",
+      "message": "「という観点」等の翻訳調を避ける。「で見ると」「については」など直接的に書く",
+      "source": "natural-japanese (coji, MIT)"
+    },
+    {
+      "id": "ai-slop.nj.translationese-misc",
+      "category": "ai-slop",
+      "severity": "info",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "にとって重要|を持つ(こと|存在)|することによって|であることは間違いない|に他ならない",
+      "message": "翻訳調の抽象表現を避ける。必要性・所有・手段・根拠を直接書く",
+      "source": "natural-japanese (coji, MIT)"
+    },
+    {
+      "id": "ai-slop.nj.inanimate-subject",
+      "category": "ai-slop",
+      "severity": "info",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "(これ|それ|この事実|そのこと)(は|が)[^。\\n]{0,40}(もたらす|示す|意味する|証明する|生み出す|反映する)",
+      "message": "無生物を能動的な主語にしない。「〜から分かる」など人や状態を主語に書き換える",
+      "source": "natural-japanese (coji, MIT)"
+    },
+    {
       "id": "style.colloquial-technical",
       "category": "style",
       "severity": "info",
@@ -267,6 +397,16 @@
       "pattern": "[\\u{1F300}-\\u{1FAFF}\\u2600-\\u27BF\\u2B50\\u2757\\u2764]",
       "message": "絵文字を使わない（装飾最小化）",
       "source": "装飾最小化"
+    },
+    {
+      "id": "vocab.version-suffix",
+      "category": "vocab",
+      "severity": "info",
+      "type": "regex",
+      "target": "prose",
+      "pattern": "(社内|汎用|簡易|軽量|改良|完全)版",
+      "message": "バージョンや派生を接尾辞の「版」で指さない。対象を具体名で書く",
+      "source": "用語統一"
     },
     {
       "id": "format.bare-pr-number",
