@@ -103,7 +103,7 @@ TypeScript + [vscode-languageserver](https://www.npmjs.com/package/vscode-langua
 
 ```bash
 task install     # npm ci
-task ci          # lint + typecheck + build + test + dogfood + dist 鮮度検査
+task ci          # lint + typecheck + build + test + dogfood
 task lint:fix    # Biome 自動修正
 ```
 
@@ -111,7 +111,7 @@ task lint:fix    # Biome 自動修正
 
 - lefthook: pre-commit で Biome と型検査、pre-push で `task ci`
 - Claude Code hook（`.claude/settings.json`）: Edit / Write のたびに、`.ts` / `.json` は Biome、`.md` は自身の linter で即時検査
-- CI（GitHub Actions）と `task dist-check`: コミット済み `dist/` が `src/` と一致しないと fail（バンドルの更新漏れを防ぐ）
+- CI（GitHub Actions）: main への push で `dist/` を再ビルドし、差分があれば bot が main へ commit する。PR で `dist/` を更新する必要はない
 - dogfood: README と SKILL.md を自身の linter で検査する
 
 ```bash
