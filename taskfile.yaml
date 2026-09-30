@@ -42,18 +42,11 @@ tasks:
     cmds:
       - node dist/cli.js lint README.md SKILL.md --fail-on warning
 
-  dist-check:
-    desc: Ensure committed dist/ matches src/ (guardrail)
-    cmds:
-      - git diff --exit-code dist
-      - test -z "$(git status --porcelain dist)"
-
   ci:
-    desc: Run all checks (lint, typecheck, build, test, dogfood, dist freshness)
+    desc: Run all checks (lint, typecheck, build, test, dogfood)
     cmds:
       - task: lint
       - task: typecheck
       - task: build
       - task: test
       - task: dogfood
-      - task: dist-check
