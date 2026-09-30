@@ -7,7 +7,11 @@ var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __commonJS = (cb, mod) => function __require() {
-  return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+  try {
+    return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+  } catch (e) {
+    throw mod = 0, e;
+  }
 };
 var __copyProps = (to, from, except, desc) => {
   if (from && typeof from === "object" || typeof from === "function") {
@@ -9170,6 +9174,7 @@ var LineIndex = class {
       if (text[i] === "\n") this.starts.push(i + 1);
     }
   }
+  text;
   starts = [0];
   /** offset -> 0-based {line, col}。col は UTF-16 code unit 単位。 */
   pos(offset) {
@@ -9244,6 +9249,7 @@ var VaultIndex = class _VaultIndex {
       else map.set(key, [value]);
     }
   }
+  root;
   static cache = /* @__PURE__ */ new Map();
   mdStems = /* @__PURE__ */ new Map();
   relNoExt = /* @__PURE__ */ new Set();
@@ -9348,6 +9354,9 @@ var Context = class {
       if (lt.startsWith("#")) this.headingLines.add(i);
     }
   }
+  text;
+  filePath;
+  workspaceRoot;
   index;
   linkable;
   prose;
