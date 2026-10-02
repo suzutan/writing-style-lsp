@@ -8,6 +8,9 @@
   "engines": {
     "node": ">=20"
   },
+  "bin": {
+    "writing-style-lsp": "dist/cli.js"
+  },
   "scripts": {
     "build": "node scripts/build.mjs",
     "lint": "biome check .",
