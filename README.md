@@ -17,6 +17,14 @@ claude plugin install writing-style-lsp@suzutan
 
 ## CLI
 
+commit ID を指定して Git URL から実行する場合は、`npx` が `bin` に登録された CLI を起動する。
+
+```bash
+npx --yes 'git+https://github.com/suzutan/writing-style-lsp#<commit-id>' lint docs/ --min-severity warning --fail-on warning
+```
+
+導入済みのソースから実行する場合:
+
 ```bash
 # lint（ファイル・ディレクトリ混在可）
 node dist/cli.js lint path/to/doc.md docs/ --stat
