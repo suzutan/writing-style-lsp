@@ -10175,6 +10175,9 @@ var SEVERITY_ORDER = {
   info: 2,
   hint: 3
 };
+var PARALLEL_SENTENCE_PATTERN = "(?=[^\u3002\\n]*(?:\u3001[^\u3002\\n]*){3,}\u3002)(?:[^\u3002\\n]*?\u3057\u3001){2,}[^\u3002\\n]*\u3002|(?:[^\u3002\u3001\\n]+\u3001){3,}[^\u3002\\n]*?\u306E[0-9\uFF10-\uFF19]+\u4EF6";
+var PARALLEL_SENTENCE_WITHOUT_COUNT = "(?=[^\u3002\\n]*(?:\u3001[^\u3002\\n]*){3,}\u3002)(?:[^\u3002\\n]*?\u3057\u3001){2,}[^\u3002\\n]*\u3002";
+var COUNT_SUFFIX_RE = /の[0-9０-９]+件/u;
 function compileRegex(pattern, flags) {
   try {
     return new RegExp(pattern, `${flags}u`);
@@ -10443,6 +10446,9 @@ var Engine = class _Engine {
       const compiled = { ...rule, _exc: [] };
       if (rule.type === "regex" && rule.pattern !== void 0) {
         compiled._re = compileRegex(rule.pattern, "gm");
+        if (rule.pattern === PARALLEL_SENTENCE_PATTERN) {
+          compiled._withoutCount = compileRegex(PARALLEL_SENTENCE_WITHOUT_COUNT, "gm");
+        }
         compiled._exc = (rule.exceptions ?? []).map((e) => compileRegex(e, "g"));
       } else if (rule.type === "density" && rule.pattern !== void 0) {
         compiled._re = compileRegex(rule.pattern, "g");
@@ -10456,7 +10462,8 @@ var Engine = class _Engine {
     const text = target === "prose" ? ctx.prose : target === "linkable" ? ctx.linkable : ctx.text;
     const hits = [];
     if (!rule._re) return hits;
-    for (const m of finditer(rule._re, text)) {
+    const re = rule._withoutCount && !COUNT_SUFFIX_RE.test(text) ? rule._withoutCount : rule._re;
+    for (const m of finditer(re, text)) {
       const s = m.index;
       const e = m.index + m[0].length;
       if (s === e) continue;

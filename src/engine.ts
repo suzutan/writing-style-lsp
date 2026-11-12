@@ -64,6 +64,11 @@ interface RulesFile {
 type Span = [number, number];
 type Hit = { start: number; end: number; message?: string };
 
+const PARALLEL_SENTENCE_PATTERN =
+  "(?=[^。\\n]*(?:、[^。\\n]*){3,}。)(?:[^。\\n]*?し、){2,}[^。\\n]*。|(?:[^。、\\n]+、){3,}[^。\\n]*?の[0-9０-９]+件";
+const PARALLEL_SENTENCE_WITHOUT_COUNT = "(?=[^。\\n]*(?:、[^。\\n]*){3,}。)(?:[^。\\n]*?し、){2,}[^。\\n]*。";
+const COUNT_SUFFIX_RE = /の[0-9０-９]+件/u;
+
 /** \u{...} を含むパターンのために u フラグ付きを優先し、非対応パターンはフォールバックする。 */
 function compileRegex(pattern: string, flags: string): RegExp {
   try {
@@ -359,6 +364,7 @@ class Context {
 
 interface CompiledRule extends Rule {
   _re?: RegExp;
+  _withoutCount?: RegExp;
   _exc: RegExp[];
 }
 
@@ -381,6 +387,9 @@ export class Engine {
       const compiled: CompiledRule = { ...rule, _exc: [] };
       if (rule.type === "regex" && rule.pattern !== undefined) {
         compiled._re = compileRegex(rule.pattern, "gm");
+        if (rule.pattern === PARALLEL_SENTENCE_PATTERN) {
+          compiled._withoutCount = compileRegex(PARALLEL_SENTENCE_WITHOUT_COUNT, "gm");
+        }
         compiled._exc = (rule.exceptions ?? []).map((e) => compileRegex(e, "g"));
       } else if (rule.type === "density" && rule.pattern !== undefined) {
         compiled._re = compileRegex(rule.pattern, "g");
@@ -396,7 +405,9 @@ export class Engine {
     const text = target === "prose" ? ctx.prose : target === "linkable" ? ctx.linkable : ctx.text;
     const hits: Hit[] = [];
     if (!rule._re) return hits;
-    for (const m of finditer(rule._re, text)) {
+    // The count alternative cannot match without its suffix; retain the full pattern otherwise.
+    const re = rule._withoutCount && !COUNT_SUFFIX_RE.test(text) ? rule._withoutCount : rule._re;
+    for (const m of finditer(re, text)) {
       const s = m.index;
       const e = m.index + m[0].length;
       if (s === e) continue;
