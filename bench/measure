@@ -1,0 +1,2 @@
+#!/bin/sh
+exec node --expose-gc "$(dirname "$0")/cli.mjs" measure "$@"

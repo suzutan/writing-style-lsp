@@ -126,6 +126,10 @@ task lint:fix    # Biome 自動修正
 npx vitest run   # 既知入力（全ルール発火 / 誤検知ゼロ）、.wslsp.json override、LSP プロトコル一巡
 ```
 
+### 性能計測
+
+`bench/`に固定corpus、diagnosticsのgolden、計測と検証の契約を置く。`bench/measure <targetの絶対パス>`で対象checkoutをlintしたときのCPU時間をJSON出力し、`bench/guard <targetの絶対パス>`で既存テスト、golden一致、`dist/`と再build結果の一致を検証する。手順は[bench/README.md](bench/README.md)を参照。
+
 ## 設計メモ
 
 - 位置情報は UTF-16 code unit 単位で扱う（LSP 既定のエンコーディングと一致。範囲変換は `vscode-languageserver-textdocument` の `positionAt`）

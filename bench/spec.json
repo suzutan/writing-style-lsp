@@ -1,0 +1,17 @@
+{
+  "objective": "lint_cpu_ms",
+  "direction": "lower",
+  "min_effect": 0.1,
+  "repetitions": 15,
+  "warmup": 2,
+  "protected_paths": [
+    "bench/",
+    "tests/",
+    "rules/",
+    "scripts/",
+    "package.json",
+    "package-lock.json",
+    "tsconfig.json",
+    ".npmrc"
+  ]
+}
