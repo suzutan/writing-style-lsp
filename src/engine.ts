@@ -66,7 +66,9 @@ type Hit = { start: number; end: number; message?: string };
 
 const PARALLEL_SENTENCE_PATTERN =
   "(?=[^。\\n]*(?:、[^。\\n]*){3,}。)(?:[^。\\n]*?し、){2,}[^。\\n]*。|(?:[^。、\\n]+、){3,}[^。\\n]*?の[0-9０-９]+件";
-const PARALLEL_SENTENCE_WITHOUT_COUNT = "(?=[^。\\n]*(?:、[^。\\n]*){3,}。)(?:[^。\\n]*?し、){2,}[^。\\n]*。";
+// A leftmost match consumes its entire sentence, so no interior start needs to be retried.
+const PARALLEL_SENTENCE_WITHOUT_COUNT =
+  "(?<![^。\\n])(?=[^。\\n]*(?:、[^。\\n]*){3,}。)(?:[^。\\n]*?し、){2,}[^。\\n]*。";
 const COUNT_SUFFIX_RE = /の[0-9０-９]+件/u;
 
 /** \u{...} を含むパターンのために u フラグ付きを優先し、非対応パターンはフォールバックする。 */

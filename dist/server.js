@@ -10176,7 +10176,7 @@ var SEVERITY_ORDER = {
   hint: 3
 };
 var PARALLEL_SENTENCE_PATTERN = "(?=[^\u3002\\n]*(?:\u3001[^\u3002\\n]*){3,}\u3002)(?:[^\u3002\\n]*?\u3057\u3001){2,}[^\u3002\\n]*\u3002|(?:[^\u3002\u3001\\n]+\u3001){3,}[^\u3002\\n]*?\u306E[0-9\uFF10-\uFF19]+\u4EF6";
-var PARALLEL_SENTENCE_WITHOUT_COUNT = "(?=[^\u3002\\n]*(?:\u3001[^\u3002\\n]*){3,}\u3002)(?:[^\u3002\\n]*?\u3057\u3001){2,}[^\u3002\\n]*\u3002";
+var PARALLEL_SENTENCE_WITHOUT_COUNT = "(?<![^\u3002\\n])(?=[^\u3002\\n]*(?:\u3001[^\u3002\\n]*){3,}\u3002)(?:[^\u3002\\n]*?\u3057\u3001){2,}[^\u3002\\n]*\u3002";
 var COUNT_SUFFIX_RE = /の[0-9０-９]+件/u;
 function compileRegex(pattern, flags) {
   try {
