@@ -127,13 +127,31 @@ export class LineIndex {
 }
 
 function maskSpans(text: string, spans: Span[]): string {
-  const arr = text.split("");
-  for (const [s, e] of spans) {
-    for (let i = s; i < Math.min(e, arr.length); i++) {
-      if (arr[i] !== "\n") arr[i] = "\0";
+  if (spans.length === 0) return text;
+  const parts: string[] = [];
+  let cursor = 0;
+  let newline = text.indexOf("\n");
+  if (newline < 0) newline = text.length;
+  for (const [start, end] of spans.slice().sort((a, b) => a[0] - b[0])) {
+    let s = Math.max(cursor, start);
+    const e = Math.min(end, text.length);
+    if (s >= e) continue;
+    parts.push(text.slice(cursor, s));
+    if (newline < s) {
+      newline = text.indexOf("\n", s);
+      if (newline < 0) newline = text.length;
     }
+    while (newline < e) {
+      parts.push("\0".repeat(newline - s), "\n");
+      s = newline + 1;
+      newline = text.indexOf("\n", s);
+      if (newline < 0) newline = text.length;
+    }
+    parts.push("\0".repeat(e - s));
+    cursor = e;
   }
-  return arr.join("");
+  parts.push(text.slice(cursor));
+  return parts.join("");
 }
 
 function* finditer(re: RegExp, text: string): Generator<RegExpExecArray> {
@@ -286,12 +304,17 @@ export function workspaceDisabledFor(filePath: string): Set<string> {
   return disabled;
 }
 
+type Paragraph = { readonly start: number; readonly text: string };
+type Sentence = { readonly start: number; readonly end: number; readonly text: string };
+
 class Context {
   readonly index: LineIndex;
   readonly linkable: string;
   readonly prose: string;
   readonly tableLines = new Set<number>();
   readonly headingLines = new Set<number>();
+  private paragraphCache?: readonly Paragraph[];
+  private sentenceCache?: readonly Sentence[];
 
   constructor(
     readonly text: string,
@@ -330,19 +353,22 @@ class Context {
   }
 
   /** (開始 offset, 段落テキスト) のリスト。prose ベース。 */
-  paragraphs(): Array<{ start: number; text: string }> {
-    const out: Array<{ start: number; text: string }> = [];
+  paragraphs(): readonly Paragraph[] {
+    if (this.paragraphCache) return this.paragraphCache;
+    const out: Paragraph[] = [];
     for (const m of finditer(/(?:[^\n]|\n(?![ \t]*\n))+/g, this.prose)) {
       if (m[0].replaceAll("\0", "").trim() !== "") {
         out.push({ start: m.index, text: m[0] });
       }
     }
+    this.paragraphCache = out;
     return out;
   }
 
   /** 文のリスト。表・見出し行は除外。 */
-  sentences(): Array<{ start: number; end: number; text: string }> {
-    const out: Array<{ start: number; end: number; text: string }> = [];
+  sentences(): readonly Sentence[] {
+    if (this.sentenceCache) return this.sentenceCache;
+    const out: Sentence[] = [];
     for (const para of this.paragraphs()) {
       if (this.isTable(para.start) || this.isHeading(para.start)) continue;
       for (const m of finditer(/[^。]*。/g, para.text)) {
@@ -353,6 +379,7 @@ class Context {
         }
       }
     }
+    this.sentenceCache = out;
     return out;
   }
 }

@@ -104,13 +104,31 @@ var LineIndex = class {
   }
 };
 function maskSpans(text, spans) {
-  const arr = text.split("");
-  for (const [s, e] of spans) {
-    for (let i = s; i < Math.min(e, arr.length); i++) {
-      if (arr[i] !== "\n") arr[i] = "\0";
+  if (spans.length === 0) return text;
+  const parts = [];
+  let cursor = 0;
+  let newline = text.indexOf("\n");
+  if (newline < 0) newline = text.length;
+  for (const [start, end] of spans.slice().sort((a, b) => a[0] - b[0])) {
+    let s = Math.max(cursor, start);
+    const e = Math.min(end, text.length);
+    if (s >= e) continue;
+    parts.push(text.slice(cursor, s));
+    if (newline < s) {
+      newline = text.indexOf("\n", s);
+      if (newline < 0) newline = text.length;
     }
+    while (newline < e) {
+      parts.push("\0".repeat(newline - s), "\n");
+      s = newline + 1;
+      newline = text.indexOf("\n", s);
+      if (newline < 0) newline = text.length;
+    }
+    parts.push("\0".repeat(e - s));
+    cursor = e;
   }
-  return arr.join("");
+  parts.push(text.slice(cursor));
+  return parts.join("");
 }
 function* finditer(re, text) {
   const g = new RegExp(re.source, re.flags.includes("g") ? re.flags : `${re.flags}g`);
@@ -268,6 +286,8 @@ var Context = class {
   prose;
   tableLines = /* @__PURE__ */ new Set();
   headingLines = /* @__PURE__ */ new Set();
+  paragraphCache;
+  sentenceCache;
   isTable(offset) {
     return this.tableLines.has(this.index.lineOf(offset));
   }
@@ -276,16 +296,19 @@ var Context = class {
   }
   /** (開始 offset, 段落テキスト) のリスト。prose ベース。 */
   paragraphs() {
+    if (this.paragraphCache) return this.paragraphCache;
     const out = [];
     for (const m of finditer(/(?:[^\n]|\n(?![ \t]*\n))+/g, this.prose)) {
       if (m[0].replaceAll("\0", "").trim() !== "") {
         out.push({ start: m.index, text: m[0] });
       }
     }
+    this.paragraphCache = out;
     return out;
   }
   /** 文のリスト。表・見出し行は除外。 */
   sentences() {
+    if (this.sentenceCache) return this.sentenceCache;
     const out = [];
     for (const para of this.paragraphs()) {
       if (this.isTable(para.start) || this.isHeading(para.start)) continue;
@@ -297,6 +320,7 @@ var Context = class {
         }
       }
     }
+    this.sentenceCache = out;
     return out;
   }
 };
